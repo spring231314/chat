@@ -92,7 +92,7 @@ function sendMessage() {
     }
 
     const apiKey = 'ragflow-YxYWYzMzY4M2JjYjExZjBhNWQ2MWUzZj';
-    const endpoint = 'https://api.deepseek.com/chat/completions';
+    const endpoint = 'http://localhost:8000/api/v1/chat/completions';
 
     const payload = {
         model: "deepseek-chat",
