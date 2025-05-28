@@ -91,17 +91,29 @@ function sendMessage() {
         loadingElement.style.display = 'block';
     }
 
+
+
+    
     const apiKey = 'ragflow-YxYWYzMzY4M2JjYjExZjBhNWQ2MWUzZj';
     const endpoint = 'http://localhost:8000/api/v1/chat/completions';
 
-    const payload = {
-        model: "deepseek-chat",
-        messages: [
-            { role: "system", content: "You are a helpful assistant" },
-            { role: "user", content: message }
-        ],
-        stream: false
-    };
+   const payload = {
+  model: "ragflow-model",  // 根据您的实际模型名修改
+  messages: [
+    { role: "system", content: "You are a helpful assistant specialized in answering questions based on the knowledge base." },
+    { role: "user", content: message }
+  ],
+  max_tokens: 1000,
+  temperature: 0.7,
+  top_p: 0.9,
+  stream: false,
+  // RAGFlow 特有参数
+  knowledge_base_id: "your-knowledge-base-id", // 您的知识库ID
+  rag_config: {
+    retrieval_top_k: 5,
+    score_threshold: 0.6
+  }
+};
 
     fetch(endpoint, {
         method: 'POST',
@@ -118,9 +130,21 @@ function sendMessage() {
             loadingElement.style.display = 'none';
         }
 
-        if (data.choices && data.choices.length > 0) {
-            displayMessage('bot', data.choices[0].message.content);
-        } else {
+       if (data && data.choices && data.choices.length > 0) {
+  // RAGFlow 返回的完整响应结构
+  const botResponse = data.choices[0].message.content;
+  
+  // 如果需要显示引用来源（RAG特有）
+  if (data.usage && data.usage.retrieved_documents) {
+    const sources = data.usage.retrieved_documents.map(doc => 
+      `- ${doc.metadata.title || doc.metadata.file_name} (Page ${doc.metadata.page || 1})`
+    ).join('\n');
+    
+    displayMessage('bot', `${botResponse}\n\n### 来源参考:\n${sources}`);
+  } else {
+    displayMessage('bot', botResponse);
+  }
+}else {
             displayMessage('bot', '出错了，请稍后再试。');
         }
     })
