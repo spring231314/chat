@@ -95,7 +95,7 @@ function sendMessage() {
 
     
     const apiKey = 'ragflow-YxYWYzMzY4M2JjYjExZjBhNWQ2MWUzZj';
-    const endpoint = 'http://localhost:8000/api/v1/chat/completions';
+    const endpoint = 'http://localhost:80/api/v1/chat/completions';
 
    const payload = {
   model: "ragflow-model",  // 根据您的实际模型名修改
